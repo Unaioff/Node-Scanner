@@ -1,4 +1,6 @@
 import customtkinter as ctk
+from scanner import ValidIp, NetworkNodeScan, SimpleNodeScan
+
 
 
 # ===================== [ TOOLBAR ] =====================
@@ -11,7 +13,7 @@ class ToolBar(ctk.CTkFrame):
         self.search_entry.grid(row=0, column=0, padx=(0, 10), sticky="ew")
 
         # Botón Scan
-        self.search_button = ctk.CTkButton(self, text="B", width=40, height=40)
+        self.search_button = ctk.CTkButton(self, text="B", width=40, height=40, command=self.ScanInput)
         self.search_button.grid(row=0, column=1, padx=(0, 10))
 
         # Botón settings
@@ -24,6 +26,28 @@ class ToolBar(ctk.CTkFrame):
         self.grid_columnconfigure(2, weight=0)
 
 
+    # Pensar Problema crear ip ya existente
+    def ScanInput(self):
+        InputedIP = self.search_entry.get()
+        if ValidIp(InputedIP):
+            print("IP Valida")
+            if "/" in InputedIP:
+                NetworkNodeScan(InputedIP)
+            else:
+                SimpleNodeScan(InputedIP)
+            self.search_entry.set("")   
+            
+        else:
+            print("[ERROR] IP Invalida")
+
+
+
+
+    
+
+
+
+
 # ===================== [ MAP SECTION ] =====================
 class MapSection(ctk.CTkFrame):
     def __init__(self, master):
@@ -32,38 +56,38 @@ class MapSection(ctk.CTkFrame):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-        self.NodoCanvas = ctk.CTkCanvas(self, bg="#2b2b2b", highlightthickness=0)
-        self.NodoCanvas.grid(row=0, column=0, sticky="nsew")
+        self.nodo_canvas = ctk.CTkCanvas(self, bg="#2b2b2b", highlightthickness=0)
+        self.nodo_canvas.grid(row=0, column=0, sticky="nsew")
 
         self.CreateNodo("192.168.0.1", 100, 100)
 
         self.scale = 1.0
 
-        self.NodoCanvas.bind("<MouseWheel>", self.Zoom)
-        self.NodoCanvas.bind("<B1-Motion>", self.MoveCamera)
-        self.NodoCanvas.bind("<ButtonPress-1>", self.StartMove)
+        self.nodo_canvas.bind("<MouseWheel>", self.Zoom)
+        self.nodo_canvas.bind("<B1-Motion>", self.MoveCamera)
+        self.nodo_canvas.bind("<ButtonPress-1>", self.StartMove)
 
     def StartMove(self, event):
-        self.NodoCanvas.scan_mark(event.x, event.y)
+        self.nodo_canvas.scan_mark(event.x, event.y)
 
     def Zoom(self, event):
         factor = 1.1 if event.delta > 0 else 0.9
 
-        x = self.NodoCanvas.canvasx(event.x)
-        y = self.NodoCanvas.canvasy(event.y)
+        x = self.nodo_canvas.canvasx(event.x)
+        y = self.nodo_canvas.canvasy(event.y)
 
-        self.NodoCanvas.scale("all", x, y, factor, factor)
+        self.nodo_canvas.scale("all", x, y, factor, factor)
 
         self.scale *= factor  # ahora sí tiene sentido
-        self.NodoCanvas.configure(scrollregion=self.NodoCanvas.bbox("all"))
+        self.nodo_canvas.configure(scrollregion=self.nodo_canvas.bbox("all"))
 
     def MoveCamera(self, event):
-        self.NodoCanvas.scan_dragto(event.x, event.y, gain=1)
+        self.nodo_canvas.scan_dragto(event.x, event.y, gain=1)
         
 
     def CreateNodo(self, ip, x, y):
-        self.NodoCanvas.create_oval(x-25, y-25, x+25, y+25, fill="#54d060", outline="#1f831a", width=3)
-        self.NodoCanvas.create_text(x, y+30, text=ip, fill="white", font=("Arial", 12, "bold"))
+        self.nodo_canvas.create_oval(x-25, y-25, x+25, y+25, fill="#54d060", outline="#1f831a", width=3)
+        self.nodo_canvas.create_text(x, y+30, text=ip, fill="white", font=("Arial", 12, "bold"))
 
 
 # ===================== [ INFO SECTION ] =====================

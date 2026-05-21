@@ -1,7 +1,7 @@
 from scapy.all import IP, ICMP, sr1
 import os
 import socket
-
+import ipaddress
 
 # OBTENER IP HOST
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -9,36 +9,39 @@ s.connect(("8.8.8.8", 80))
 print(s.getsockname()[0])
 s.close()
 
+Nodos = []
 
+def ValidIp(InputedText):
+    try:
+        ipaddress.ip_address(InputedText)
+        return True
+    except ValueError:
+        pass
 
-
-
-
-
-'''  
-# AÑADIR NODO ( X.X.X.X )
-def SimpleNodeScan():
-
+    try:
+        ipaddress.ip_network(InputedText, strict=False)
+        return True
+    except ValueError:
+        return False
     
-# AÑADIR MULTIPLES NODOS ( X.X.X.X/24 ) 
-def NetworkNodeScan():
-'''
+
+def CrearNodo(data):
+    NuevoNodo = data
+    Nodos.append(NuevoNodo)
 
 
-
-
-InputedIP = input(">> ")
-
-
-if "/" in InputedIP:
-    DiscoverHosts(InputedIP)
-else:
-    #SimpleNodeScan(InputedIP)
-    print(Ping(InputedIP))
-    
+def SimpleNodeScan(HostIp):
+    print("")
     
 
 
+def NetworkNodeScan(NetworkIp):
+    NetworkIp = NetworkIp.split("/")
+
+
+
+
+# ONLY ICMP STATUS 
 def Ping(DestIP):
     ICMPRequest = IP(dst=DestIP) / ICMP()
     response = sr1(ICMPRequest, timeout=2, verbose=0)
@@ -46,16 +49,15 @@ def Ping(DestIP):
         return True
     else: 
         return False
+    
 
-
-
-
+# ONLY ICMP DISCOVER HOST
 def DiscoverHosts(network):
-    """Scans a network for active hosts using ICMP Echo Requests."""
+    #Scans a network for active hosts using ICMP Echo Requests.
     network_obj = ipaddress.ip_network(network)
     active_hosts = []
 
-    for ip_address in network_obj.hosts(): # Iterate through all usable host IPs in the network
+    for ip_address in network_obj.hosts(): #
         ip_str = str(ip_address)
         icmp_request = IP(dst=ip_str) / ICMP()
         response = sr1(icmp_request, timeout=1, verbose=0)
@@ -134,7 +136,6 @@ class Nodo():
         }
 
         self.connections = [] 
-
 
 
         # [  NODOS ] 

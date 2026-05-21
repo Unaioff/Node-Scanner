@@ -1,16 +1,21 @@
 from scapy.all import IP, ICMP, sr1
-import os
 import socket
 import ipaddress
 
-# OBTENER IP HOST
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect(("8.8.8.8", 80))
-print(s.getsockname()[0])
-s.close()
 
+
+# OBTENER IP HOST
+def SelfHost():
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+        s.connect(("8.8.8.8", 80))
+        return s.getsockname()[0]
+
+
+# Esto almacenara todos los Obj de clase Nodo
 Nodos = []
 
+
+# Verifica que sea un ip
 def ValidIp(InputedText):
     try:
         ipaddress.ip_address(InputedText)
@@ -25,23 +30,32 @@ def ValidIp(InputedText):
         return False
     
 
+# Crea un nuevo Nodo 
 def CrearNodo(data):
-    NuevoNodo = data
+    NuevoNodo = Nodo(id=len(Nodos),)
     Nodos.append(NuevoNodo)
 
 
+# Actualiza un nodo ya existente
+def ActualizarNodo(data):
+    pass
+
+# Realiza un escaneo de Nodo simple a partir de la configuracion
 def SimpleNodeScan(HostIp):
     print("")
     
 
-
+# Realiza un escaneo de Nodo multiple a partir de la configuracion
 def NetworkNodeScan(NetworkIp):
     NetworkIp = NetworkIp.split("/")
 
 
+# Herramienta para seguir las rutas de conexion 
+def TraceRoute(Ip):
+    pass
 
 
-# ONLY ICMP STATUS 
+# ONLY ICMP STATUS ( Me da la english vena a veces) Escaneo de nodo simple en pañales (Esta de referencia)
 def Ping(DestIP):
     ICMPRequest = IP(dst=DestIP) / ICMP()
     response = sr1(ICMPRequest, timeout=2, verbose=0)
@@ -51,7 +65,7 @@ def Ping(DestIP):
         return False
     
 
-# ONLY ICMP DISCOVER HOST
+# ONLY ICMP DISCOVER HOST - Escaneo de nodo multiple en pañales (Esta de referencia)
 def DiscoverHosts(network):
     #Scans a network for active hosts using ICMP Echo Requests.
     network_obj = ipaddress.ip_network(network)
@@ -74,51 +88,8 @@ def DiscoverHosts(network):
 
 
 
-
-
-
-
-print("---[ Network Scanner ]---")
-print("")
-print("1. Descubrir Hosts")
-print("2. Escanear Puertos")
-print("3. Escanear rango de puertos")
-print("4. Trazar ruta a destino")
-print("5. Is alive IP?")
-print("")
-InputOption = input(">> ")
-
-if InputOption == "1":
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-
-elif InputOption == "2":
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-elif InputOption == "3":
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-elif InputOption == "4":
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-
-elif InputOption == "5":
-    os.system('cls' if os.name == 'nt' else 'clear')
-    DestIp = input("Introduce la ip del pc destino: ")
-
-    if Ping(DestIp):
-        print("¡Respuesta recibida!")
-    else:
-        print("No hubo respuesta")
-
-
-else:
-    print("Xd")
-
-
-
 class Nodo():
-    def __init__(self, id, hostname="", ip="", mac="", mask="255.255.255.255"):
+    def __init__(self, id, hostname="", ip="", mac="", mask="255.255.255.0"):
         
         # [ DATOS NODOS ] 
         self.id = id
@@ -129,11 +100,8 @@ class Nodo():
         self.online = False
         self.mask = mask
 
-        self.properties = {
-            "os": None,
-            "services": [],
-            "latency": None
-        }
+        self.os = None,
+        self.services = []
 
         self.connections = [] 
 
@@ -150,37 +118,24 @@ class Nodo():
             "MAC": self.mac,
             "Online": self.online,
             "Mask": self.mask,
-            "OS": self.properties["os"],
-            "Services": self.properties["services"],
-            "Latency": self.properties["latency"],
+            "OS": self.os,
+            "Services": self.services,
+            "Connections": self.connections
         }
 
     
+    # Esto es lo que dibujara los nodos y las conexiones
+    def DrawNode(self, x, y):
+        if self.online: 
+            if SelfHost == self.ip:
+                self.nodo_canvas.create_oval(x-25, y-25, x+25, y+25, fill="#56d054", outline="#1a831c", width=3)
+            else:
+                self.nodo_canvas.create_oval(x-25, y-25, x+25, y+25, fill="#549cd0", outline="#1a5b83", width=3)
+        else: 
+            self.nodo_canvas.create_oval(x-25, y-25, x+25, y+25, fill="#d05454", outline="#831a1a", width=3)
+        self.nodo_canvas.create_text(x, y+30, text=self.ip, fill="white", font=("Arial", 12, "bold"))
 
-    def DrawNode():
-
-
-        
-
-
-
-
-
-
-def DisoverHosts():
-
-
-
-
-def PortScan(NodoDestino):
-if NodoDestino.online:
-    print("Podemos escanear")
-else:
-    print("El equipo no esta disponible")
-
-
-
-
+    
 
 
 MiPC = Nodo()

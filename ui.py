@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from scanner import ValidIp, NetworkNodeScan, SimpleNodeScan
+from scanner import ValidIp, NetworkNodeScan, SimpleNodeScan, CrearNodo, ActualizarNodo, Nodos
 
 
 
@@ -26,20 +26,30 @@ class ToolBar(ctk.CTkFrame):
         self.grid_columnconfigure(2, weight=0)
 
 
-    # Pensar Problema crear ip ya existente
+
     def ScanInput(self):
         InputedIP = self.search_entry.get()
         if ValidIp(InputedIP):
             print("IP Valida")
-            if "/" in InputedIP:
-                NetworkNodeScan(InputedIP)
+            Existe = False
+            id = None
+        
+            for nodo in Nodos:
+                if nodo.ip == InputedIP:
+                    Existe = True
+                    nodo.id = id 
+                    break
+
+            if not "/" in InputedIP:
+                if Existe: ActualizarNodo(id,SimpleNodeScan(InputedIP))
+                else: CrearNodo(SimpleNodeScan(InputedIP))
             else:
-                SimpleNodeScan(InputedIP)
+                NetworkNodeScan(InputedIP)
+           
             self.search_entry.set("")   
             
         else:
             print("[ERROR] IP Invalida")
-
 
 
 
@@ -78,7 +88,7 @@ class MapSection(ctk.CTkFrame):
 
         self.nodo_canvas.scale("all", x, y, factor, factor)
 
-        self.scale *= factor  # ahora sí tiene sentido
+        self.scale *= factor  
         self.nodo_canvas.configure(scrollregion=self.nodo_canvas.bbox("all"))
 
     def MoveCamera(self, event):
@@ -134,7 +144,3 @@ class App(ctk.CTk):
         self.mainloop()
 
 
-# ===================== [ EJECUCIÓN ] =====================
-if __name__ == "__main__":
-    app = App()
-    app.run()

@@ -4,6 +4,6 @@
     "arp": true,
     "os": false,
     "ports": false,
-    "traceroute": false
+    "traceroute": true
   }
 }

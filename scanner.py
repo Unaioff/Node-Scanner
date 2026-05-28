@@ -8,7 +8,7 @@ with open("config.json") as i:
     CONFIG = json.load(i)
 
 
-# OBTENER IP HOST
+# OBTENER IP HOST - Se conecta a google y coge la interfaz de red con la que se conecta 
 def SelfHost():
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         s.connect(("8.8.8.8", 80))

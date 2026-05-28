@@ -1,14 +1,29 @@
-# Network-Scanner 🚧
+# 🚧EN DESARROLLO🚧
+# Node-Scanner 
 
-> ⚠️ **Proyecto en desarrollo**⚠️
->
-> Esta herramienta se encuentra actualmente en fase de desarrollo.
+Node-Scanner es una herramienta desarrollada en Python cuyo objetivo es visualizar, monitorear y analizar infraestructuras de red de forma centralizada.
 
-**Network-Scanner** es una herramienta desarrollada en Python cuyo objetivo es realizar tareas de reconocimiento activo en redes. Incluye funcionalidades como:
+La aplicación está orientada a facilitar la supervisión de dispositivos, servicios y nodos conectados dentro de una red privada, proporcionando información útil para tareas de administración, diagnóstico y reconocimiento de red.
+
+## Instalación
+
+Clona el repositorio:
+
+```bash
+git clone https://github.com/usuario/node-scanner.git
+```
+
+Instala las dependencias:
+```bash
+pip install -r requirements.txt
+```
+## Usos
 
 - Escaneo de puertos
 - Descubrimiento de hosts
 - Identificación de servicios
 - Otras utilidades de análisis de red
 
-Esta herramienta está orientada a facilitar el análisis y la enumeración de dispositivos y servicios disponibles en una red.
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)

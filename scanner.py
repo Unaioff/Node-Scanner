@@ -1,7 +1,11 @@
 from scapy.all import IP, ICMP, sr1
 import socket
 import ipaddress
+import json
 
+
+with open("config.json") as i:
+    CONFIG = json.load(i)
 
 
 # OBTENER IP HOST
@@ -40,6 +44,8 @@ def CrearNodo(data):
 def ActualizarNodo(data):
     pass
 
+
+
 # Realiza un escaneo de Nodo simple a partir de la configuracion
 def SimpleNodeScan(HostIp):
     print("")
@@ -71,7 +77,7 @@ def DiscoverHosts(network):
     network_obj = ipaddress.ip_network(network)
     active_hosts = []
 
-    for ip_address in network_obj.hosts(): #
+    for ip_address in network_obj.hosts(): 
         ip_str = str(ip_address)
         icmp_request = IP(dst=ip_str) / ICMP()
         response = sr1(icmp_request, timeout=1, verbose=0)
@@ -105,8 +111,9 @@ class Nodo():
 
         self.connections = [] 
 
-
-        # [  NODOS ] 
+        # [  POSITION NODOS ] 
+        self.x = 0
+        self.y = 0 
 
 
     # [ Facil conversion a JSON ]
@@ -120,12 +127,16 @@ class Nodo():
             "Mask": self.mask,
             "OS": self.os,
             "Services": self.services,
-            "Connections": self.connections
+            "Connections": self.connections,
+            "PositionX": self.x,
+            "PositionY": self.y
         }
 
     
     # Esto es lo que dibujara los nodos y las conexiones
-    def DrawNode(self, x, y):
+    def DrawNode(self):
+        x = self.x
+        y = self.y
         if self.online: 
             if SelfHost == self.ip:
                 self.nodo_canvas.create_oval(x-25, y-25, x+25, y+25, fill="#56d054", outline="#1a831c", width=3)

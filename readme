@@ -10,7 +10,7 @@ La aplicación está orientada a facilitar la supervisión de dispositivos, serv
 Clona el repositorio:
 
 ```bash
-git clone https://github.com/usuario/node-scanner.git
+git clone https://github.com/Unaioff/Node-Scanner.git
 ```
 
 Instala las dependencias:

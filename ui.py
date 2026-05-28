@@ -32,7 +32,6 @@ class ToolBar(ctk.CTkFrame):
         if ValidIp(InputedIP):
             print("IP Valida")
             Existe = False
-            id = None
         
             for nodo in Nodos:
                 if nodo.ip == InputedIP:
@@ -41,7 +40,7 @@ class ToolBar(ctk.CTkFrame):
                     break
 
             if not "/" in InputedIP:
-                if Existe: ActualizarNodo(id,SimpleNodeScan(InputedIP))
+                if Existe: ActualizarNodo(InputedIP,SimpleNodeScan(InputedIP))
                 else: CrearNodo(SimpleNodeScan(InputedIP))
             else:
                 NetworkNodeScan(InputedIP)

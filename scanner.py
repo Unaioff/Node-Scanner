@@ -19,7 +19,7 @@ def SelfHost():
 Nodos = []
 
 
-# Verifica que sea un ip
+# Verifica que sea una ip
 def ValidIp(InputedText):
     try:
         ipaddress.ip_address(InputedText)
@@ -34,12 +34,10 @@ def ValidIp(InputedText):
         return False
     
 
-
-
-
-
-
-
+# CREAR FUNCION PARA COMPROBAR SI EXISTE
+# TENER EN CUENTA LA MAC A LA HORA DE CREAR Y ACTUALIZAR NODOS 
+def Existe(ip):
+    pass
 
 
 
@@ -80,10 +78,10 @@ def CrearNodo(data):
 
 
 
-def ActualizarNodo(id, data):
+def ActualizarNodo(ip, data):
 
     for nodo in Nodos:
-        if nodo.id == id:
+        if nodo.ip == ip:
 
             if "ip" in data: nodo.ip = data["ip"]
             if "mac" in data: nodo.mac = data["mac"]
@@ -105,6 +103,7 @@ def SimpleNodeScan(HostIp):
     
 
 # Realiza un escaneo de Nodo multiple a partir de la configuracion
+#  Como este solo se usa en el Scaneo normal esta funcion crea o actualiza ya los nodos 
 def NetworkNodeScan(NetworkIp):
     NetworkIp = NetworkIp.split("/")
 

@@ -5,5 +5,8 @@
     "os": false,
     "ports": false,
     "traceroute": true
+  },
+  "view_options": {
+    "TEST": false
   }
 }

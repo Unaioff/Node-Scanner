@@ -8,7 +8,7 @@ with open("config.json") as i:
     CONFIG = json.load(i)
 
 
-# OBTENER IP HOST - Se conecta a google y coge la interfaz de red con la que se conecta 
+# OBTENER IP HOST - Se conecta al dns de google y coge la interfaz de red con la que se conecta 
 def SelfHost():
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         s.connect(("8.8.8.8", 80))
@@ -34,15 +34,68 @@ def ValidIp(InputedText):
         return False
     
 
+
+
+
+
+
+
+
+
+
+
+
 # Crea un nuevo Nodo 
 def CrearNodo(data):
-    NuevoNodo = Nodo(id=len(Nodos),)
+
+    NodosX = 0
+    NodosY = 0
+
+    for nodo in Nodos:
+        NodosX += nodo.x
+        NodosY += nodo.y
+
+    if len(Nodos) == 0:
+        PromedioX = 20
+        PromedioY = 20
+    else:
+        PromedioX = NodosX / len(Nodos)
+        PromedioY = NodosY / len(Nodos)
+
+    NuevoNodo = Nodo(
+        id=len(Nodos),
+        ip=data["ip"],
+        mac=data["mac"],
+        mask=data["mask"],
+        x=PromedioX,
+        y=PromedioY
+    )
+
     Nodos.append(NuevoNodo)
 
+    return NuevoNodo
 
-# Actualiza un nodo ya existente
-def ActualizarNodo(data):
-    pass
+
+
+
+
+
+def ActualizarNodo(id, data):
+
+    for nodo in Nodos:
+        if nodo.id == id:
+
+            if "ip" in data: nodo.ip = data["ip"]
+            if "mac" in data: nodo.mac = data["mac"]
+            if "mask" in data: nodo.mask = data["mask"]
+            if "x" in data: nodo.x = data["x"]
+            if "y" in data: nodo.y = data["y"]
+
+            return nodo
+
+    return None
+
+
 
 
 

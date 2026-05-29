@@ -200,6 +200,7 @@ class Nodo():
         self.y = 0 
 
         if SelfHost == self.ip: 
+            self.host = True
 
 
     # [ Facil conversion a JSON ]

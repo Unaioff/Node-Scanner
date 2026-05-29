@@ -4,8 +4,7 @@ import ipaddress
 import json
 
 
-with open("config.json") as i:
-    CONFIG = json.load(i)
+
 
 
 # OBTENER IP HOST - Se conecta al dns de google y coge la interfaz de red con la que se conecta 
@@ -36,7 +35,7 @@ def ValidIp(InputedText):
 
 # CREAR FUNCION PARA COMPROBAR SI EXISTE
 # TENER EN CUENTA LA MAC A LA HORA DE CREAR Y ACTUALIZAR NODOS 
-def Existe(ip):
+def Existe(ip): 
     pass
 
 
@@ -95,11 +94,51 @@ def ActualizarNodo(ip, data):
 
 
 
+with open("config.json") as i:
+    CONFIG = json.load(i)
+
+
 
 
 # Realiza un escaneo de Nodo simple a partir de la configuracion
-def SimpleNodeScan(HostIp):
-    print("")
+def SimpleNodeScan(DestIP):
+
+    Data=[]
+    
+    
+    # ICMP
+    if CONFIG["scan_options"]["icmp"]:
+        ICMPRequest = IP(dst=DestIP) / ICMP()
+        response = sr1(ICMPRequest, timeout=2, verbose=0)
+        if response:
+            Online = True
+    
+
+    # ARP 
+    if Online != True and CONFIG["scan_options"]["arp"] == True:
+        # Escaneo ARP
+        pass
+        
+        
+
+    # OS
+
+
+
+    # PORTS
+
+
+    # CONECTIONS
+
+
+    # MASK
+
+
+    # MAC
+
+
+    
+    return Data
     
 
 # Realiza un escaneo de Nodo multiple a partir de la configuracion
@@ -113,14 +152,7 @@ def TraceRoute(Ip):
     pass
 
 
-# ONLY ICMP STATUS ( Me da la english vena a veces) Escaneo de nodo simple en pañales (Esta de referencia)
-def Ping(DestIP):
-    ICMPRequest = IP(dst=DestIP) / ICMP()
-    response = sr1(ICMPRequest, timeout=2, verbose=0)
-    if response: 
-        return True
-    else: 
-        return False
+
     
 
 # ONLY ICMP DISCOVER HOST - Escaneo de nodo multiple en pañales (Esta de referencia)
@@ -166,6 +198,8 @@ class Nodo():
         # [  POSITION NODOS ] 
         self.x = 0
         self.y = 0 
+
+        if SelfHost == self.ip: 
 
 
     # [ Facil conversion a JSON ]

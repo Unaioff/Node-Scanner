@@ -3,9 +3,7 @@ import socket
 import ipaddress
 import json
 
-
 from ui import MapSection
-
 
 
 # OBTENER IP HOST - Se conecta al dns de google y coge la interfaz de red con la que se conecta 
@@ -61,7 +59,6 @@ def CrearNodo(data):
         PromedioY = NodosY / len(Nodos)
 
     NuevoNodo = Nodo(
-        id=len(Nodos),
         ip=data["ip"],
         mac=data["mac"],
         mask=data["mask"],
@@ -83,11 +80,10 @@ def ActualizarNodo(ip, data):
     for nodo in Nodos:
         if nodo.ip == ip:
 
-            if "ip" in data: nodo.ip = data["ip"]
-            if "mac" in data: nodo.mac = data["mac"]
-            if "mask" in data: nodo.mask = data["mask"]
-            if "x" in data: nodo.x = data["x"]
-            if "y" in data: nodo.y = data["y"]
+            if "ip" in data: nodo.NodoIP = data["ip"]
+            if "mac" in data: nodo.NodoMAC = data["mac"]
+            if "mask" in data: nodo.NodoMask = data["mask"]
+            if "os" in data: nodo.NodoOS = data["os"]
 
             return nodo
 
@@ -97,7 +93,6 @@ def ActualizarNodo(ip, data):
 
 with open("config.json") as i:
     CONFIG = json.load(i)
-
 
 
 
@@ -116,7 +111,7 @@ def SimpleNodeScan(DestIP):
     
 
     # ARP 
-    if Online != True and CONFIG["scan_options"]["arp"] == True:
+    if not Online or CONFIG["scan_options"]["arp"] == True:
         # Escaneo ARP
         pass
         
@@ -183,7 +178,6 @@ class Nodo():
     def __init__(self, NodoIP="", NodoMAC="", NodoMask="255.255.255.0", NodoPosX=0, NodoPosY=0):
         
         # [ DATOS ESENCIALES NODOS ] 
-        self.NodoID = ""
         self.NodoIP = NodoIP
         self.NodoMAC = NodoMAC
         self.NodoMask = NodoMask
@@ -201,21 +195,51 @@ class Nodo():
         self.NodoServices = []
         self.NodoConnections = [] 
 
-        self.NodoIsHost = (SelfHost == self.ip)
+        self.NodoIsHost = (SelfHost() == self.NodoIP)
 
 
+        # [ DIBUJAR NODO AL INICIO ]        
+
+        if self.NodoIsOnline:
+            if self.NodoIsHost:
+                self.NodoOvalo = MapSection.nodo_canvas.create_oval(
+                    self.NodoPosX-25, self.NodoPosY-25,
+                    self.NodoPosX+25, self.NodoPosY+25,
+                    fill="#56d054", outline="#1a831c", width=3,
+                    tags=(tag, "node")
+                )
+            else:
+                self.NodoOvalo = MapSection.nodo_canvas.create_oval(
+                    self.NodoPosX-25, self.NodoPosY-25,
+                    self.NodoPosX+25, self.NodoPosY+25,
+                    fill="#549cd0", outline="#1a5b83", width=3
+                )
+        else:
+            self.NodoOvalo = MapSection.nodo_canvas.create_oval(
+                self.NodoPosX-25, self.NodoPosY-25,
+                self.NodoPosX+25, self.NodoPosY+25,
+                fill="#d05454", outline="#831a1a", width=3
+            )
+
+        self.NodoTexto = MapSection.nodo_canvas.create_text(
+            self.NodoPosX,
+            self.NodoPosY+30,
+            text=self.NodoIP,
+            fill="white",
+            font=("Arial", 12, "bold")
+        )
 
 
     # [ Facil conversion a JSON ]
     def Data(self):
         return {
-            "ID": self.NodoID,
+
             "IP": self.NodoIP,
             "MAC": self.NodoMAC,
             "Mask": self.NodoMask,
 
-            "PositionX": self.NodoX,
-            "PositionY": self.NodoY,
+            "PositionX": self.NodoPosX,
+            "PositionY": self.NodoPosY,
             
             "Hostname": self.NodoHostname,
             "OS": self.NodoOS,
@@ -229,17 +253,11 @@ class Nodo():
 
     
     # Esto es lo que dibujara los nodos y las conexiones
-    def DrawNode(self):
-        x = self.x
-        y = self.y
-        if self.online: 
-            if SelfHost == self.ip:
-                MapSection.nodo_canvas.create_oval(x-25, y-25, x+25, y+25, fill="#56d054", outline="#1a831c", width=3)
-            else:
-                MapSection.nodo_canvas.create_oval(x-25, y-25, x+25, y+25, fill="#549cd0", outline="#1a5b83", width=3)
-        else: 
-            MapSection.nodo_canvas.create_oval(x-25, y-25, x+25, y+25, fill="#d05454", outline="#831a1a", width=3)
-        MapSection.nodo_canvas.create_text(x, y+30, text=self.ip, fill="white", font=("Arial", 12, "bold"))
+    def MoveNode(self):
+        pass
+
+
+        
 
     
 

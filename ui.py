@@ -33,8 +33,10 @@ class ToolBar(ctk.CTkFrame):
             print("IP Valida")
             Existe = False
         
+            # CONSEGUIR MAC DE INPUTEDIP
+
             for nodo in Nodos:
-                if nodo.ip == InputedIP:
+                if nodo.NodoMAC == InputedIP:
                     Existe = True
                     break
 
@@ -74,6 +76,9 @@ class MapSection(ctk.CTkFrame):
         self.nodo_canvas.bind("<MouseWheel>", self.Zoom)
         self.nodo_canvas.bind("<B1-Motion>", self.MoveCamera)
         self.nodo_canvas.bind("<ButtonPress-1>", self.StartMove)
+
+        self
+
 
     def StartMove(self, event):
         self.nodo_canvas.scan_mark(event.x, event.y)

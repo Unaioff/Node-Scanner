@@ -4,6 +4,7 @@ import ipaddress
 import json
 
 
+from ui import MapSection
 
 
 
@@ -179,44 +180,51 @@ def DiscoverHosts(network):
 
 
 class Nodo():
-    def __init__(self, id, hostname="", ip="", mac="", mask="255.255.255.0"):
+    def __init__(self, NodoIP="", NodoMAC="", NodoMask="255.255.255.0", NodoPosX=0, NodoPosY=0):
         
-        # [ DATOS NODOS ] 
-        self.id = id
-        self.hostname = hostname
-        self.ip = ip
-        self.mac = mac
+        # [ DATOS ESENCIALES NODOS ] 
+        self.NodoID = ""
+        self.NodoIP = NodoIP
+        self.NodoMAC = NodoMAC
+        self.NodoMask = NodoMask
+        
+        # [  DATOS DE DIBUJO NODO ] 
+        self.NodoPosX = NodoPosX
+        self.NodoPosY = NodoPosY
 
-        self.online = False
-        self.mask = mask
 
-        self.os = None,
-        self.services = []
+        # [ DATOS EXTRA NODOS ] 
+        self.NodoIsOnline = False
+        self.NodoHostname = ""
+        self.NodoOS = ""
 
-        self.connections = [] 
+        self.NodoServices = []
+        self.NodoConnections = [] 
 
-        # [  POSITION NODOS ] 
-        self.x = 0
-        self.y = 0 
+        self.NodoIsHost = (SelfHost == self.ip)
 
-        if SelfHost == self.ip: 
-            self.host = True
+
 
 
     # [ Facil conversion a JSON ]
     def Data(self):
         return {
-            "ID": self.id,
-            "IP": self.ip,
-            "Hostname": self.hostname,
-            "MAC": self.mac,
-            "Online": self.online,
-            "Mask": self.mask,
-            "OS": self.os,
-            "Services": self.services,
-            "Connections": self.connections,
-            "PositionX": self.x,
-            "PositionY": self.y
+            "ID": self.NodoID,
+            "IP": self.NodoIP,
+            "MAC": self.NodoMAC,
+            "Mask": self.NodoMask,
+
+            "PositionX": self.NodoX,
+            "PositionY": self.NodoY,
+            
+            "Hostname": self.NodoHostname,
+            "OS": self.NodoOS,
+            "Services": self.NodoServices,
+            "Connections": self.NodoConnections,
+
+            "Online": self.NodoIsOnline,
+            "IsHost": self.NodoIsHost
+
         }
 
     
@@ -226,16 +234,13 @@ class Nodo():
         y = self.y
         if self.online: 
             if SelfHost == self.ip:
-                self.nodo_canvas.create_oval(x-25, y-25, x+25, y+25, fill="#56d054", outline="#1a831c", width=3)
+                MapSection.nodo_canvas.create_oval(x-25, y-25, x+25, y+25, fill="#56d054", outline="#1a831c", width=3)
             else:
-                self.nodo_canvas.create_oval(x-25, y-25, x+25, y+25, fill="#549cd0", outline="#1a5b83", width=3)
+                MapSection.nodo_canvas.create_oval(x-25, y-25, x+25, y+25, fill="#549cd0", outline="#1a5b83", width=3)
         else: 
-            self.nodo_canvas.create_oval(x-25, y-25, x+25, y+25, fill="#d05454", outline="#831a1a", width=3)
-        self.nodo_canvas.create_text(x, y+30, text=self.ip, fill="white", font=("Arial", 12, "bold"))
+            MapSection.nodo_canvas.create_oval(x-25, y-25, x+25, y+25, fill="#d05454", outline="#831a1a", width=3)
+        MapSection.nodo_canvas.create_text(x, y+30, text=self.ip, fill="white", font=("Arial", 12, "bold"))
 
     
 
-
-MiPC = Nodo()
-print(MiPC.Data())
 

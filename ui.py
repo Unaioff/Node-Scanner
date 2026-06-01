@@ -17,7 +17,7 @@ class ToolBar(ctk.CTkFrame):
         self.search_button.grid(row=0, column=1, padx=(0, 10))
 
         # Botón settings
-        self.settings_button = ctk.CTkButton(self, text="S", width=40, height=40)
+        self.settings_button = ctk.CTkButton(self, text="⚙", width=40, height=40)
         self.settings_button.grid(row=0, column=2)
 
         # Configuración de columnas dentro del frame
@@ -36,7 +36,6 @@ class ToolBar(ctk.CTkFrame):
             for nodo in Nodos:
                 if nodo.ip == InputedIP:
                     Existe = True
-                    nodo.id = id 
                     break
 
             if not "/" in InputedIP:
@@ -80,6 +79,7 @@ class MapSection(ctk.CTkFrame):
         self.nodo_canvas.scan_mark(event.x, event.y)
 
     def Zoom(self, event):
+        
         factor = 1.1 if event.delta > 0 else 0.9
 
         x = self.nodo_canvas.canvasx(event.x)
@@ -143,3 +143,7 @@ class App(ctk.CTk):
         self.mainloop()
 
 
+
+
+app = App()
+app.run()

@@ -32,11 +32,13 @@ class ToolBar(ctk.CTkFrame):
         if ValidIp(InputedIP):
             print("IP Valida")
             Existe = False
-        
-            # CONSEGUIR MAC DE INPUTEDIP
+
+            # CONSEGUIR MAC DE LA IP SI ENCENDIDO
+            
+
 
             for nodo in Nodos:
-                if nodo.NodoMAC == InputedIP:
+                if nodo.NodoIP == InputedIP:
                     Existe = True
                     break
 
@@ -46,7 +48,7 @@ class ToolBar(ctk.CTkFrame):
             else:
                 NetworkNodeScan(InputedIP)
            
-            self.search_entry.set("")   
+            self.search_entry.delete(0, "end")
             
         else:
             print("[ERROR] IP Invalida")
@@ -69,15 +71,13 @@ class MapSection(ctk.CTkFrame):
         self.nodo_canvas = ctk.CTkCanvas(self, bg="#2b2b2b", highlightthickness=0)
         self.nodo_canvas.grid(row=0, column=0, sticky="nsew")
 
-        self.CreateNodo("192.168.0.1", 100, 100)
-
+        
         self.scale = 1.0
 
         self.nodo_canvas.bind("<MouseWheel>", self.Zoom)
         self.nodo_canvas.bind("<B1-Motion>", self.MoveCamera)
         self.nodo_canvas.bind("<ButtonPress-1>", self.StartMove)
 
-        self
 
 
     def StartMove(self, event):
@@ -98,10 +98,6 @@ class MapSection(ctk.CTkFrame):
     def MoveCamera(self, event):
         self.nodo_canvas.scan_dragto(event.x, event.y, gain=1)
         
-
-    def CreateNodo(self, ip, x, y):
-        self.nodo_canvas.create_oval(x-25, y-25, x+25, y+25, fill="#54d060", outline="#1f831a", width=3)
-        self.nodo_canvas.create_text(x, y+30, text=ip, fill="white", font=("Arial", 12, "bold"))
 
 
 # ===================== [ INFO SECTION ] =====================

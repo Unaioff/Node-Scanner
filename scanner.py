@@ -3,7 +3,18 @@ import socket
 import ipaddress
 import json
 
-from ui import MapSection
+
+# [ VARIABLES ]
+
+
+# -- Almacena Obj de Nodo --
+Nodos = []
+
+IDNodoCount = 0 
+
+
+
+
 
 
 # OBTENER IP HOST - Se conecta al dns de google y coge la interfaz de red con la que se conecta 
@@ -12,9 +23,6 @@ def SelfHost():
         s.connect(("8.8.8.8", 80))
         return s.getsockname()[0]
 
-
-# Esto almacenara todos los Obj de clase Nodo
-Nodos = []
 
 
 # Verifica que sea una ip
@@ -32,17 +40,11 @@ def ValidIp(InputedText):
         return False
     
 
-# CREAR FUNCION PARA COMPROBAR SI EXISTE
-# TENER EN CUENTA LA MAC A LA HORA DE CREAR Y ACTUALIZAR NODOS 
-def Existe(ip): 
-    pass
-
-
-
-
 
 # Crea un nuevo Nodo 
 def CrearNodo(data):
+
+    global IDNodoCount
 
     NodosX = 0
     NodosY = 0
@@ -58,14 +60,17 @@ def CrearNodo(data):
         PromedioX = NodosX / len(Nodos)
         PromedioY = NodosY / len(Nodos)
 
+
     NuevoNodo = Nodo(
-        ip=data["ip"],
-        mac=data["mac"],
-        mask=data["mask"],
-        x=PromedioX,
-        y=PromedioY
+        NodoID = IDNodoCount,
+        NodoIP = data["IP"],
+        NodoMAC = data["MAC"],
+        NodoMask = data["Mask"],
+        NodoPosX = PromedioX,
+        NodoPosY = PromedioY
     )
 
+    IDNodoCount += 1 
     Nodos.append(NuevoNodo)
 
     return NuevoNodo
@@ -74,11 +79,10 @@ def CrearNodo(data):
 
 
 
-
 def ActualizarNodo(ip, data):
 
     for nodo in Nodos:
-        if nodo.ip == ip:
+        if nodo.NodoIP == ip:
 
             if "ip" in data: nodo.NodoIP = data["ip"]
             if "mac" in data: nodo.NodoMAC = data["mac"]
@@ -100,8 +104,7 @@ with open("config.json") as i:
 def SimpleNodeScan(DestIP):
 
     Data=[]
-    
-    
+     
     # ICMP
     if CONFIG["scan_options"]["icmp"]:
         ICMPRequest = IP(dst=DestIP) / ICMP()
@@ -143,9 +146,6 @@ def NetworkNodeScan(NetworkIp):
     NetworkIp = NetworkIp.split("/")
 
 
-# Herramienta para seguir las rutas de conexion 
-def TraceRoute(Ip):
-    pass
 
 
 
@@ -175,7 +175,7 @@ def DiscoverHosts(network):
 
 
 class Nodo():
-    def __init__(self, NodoIP="", NodoMAC="", NodoMask="255.255.255.0", NodoPosX=0, NodoPosY=0):
+    def __init__(self, NodoID, Canvas, NodoPosX, NodoPosY, NodoIP="", NodoMAC="", NodoMask="255.255.255.0"):
         
         # [ DATOS ESENCIALES NODOS ] 
         self.NodoIP = NodoIP
@@ -183,9 +183,12 @@ class Nodo():
         self.NodoMask = NodoMask
         
         # [  DATOS DE DIBUJO NODO ] 
+        self.Canvas = Canvas
+        
         self.NodoPosX = NodoPosX
         self.NodoPosY = NodoPosY
 
+        self.NodoID = NodoID
 
         # [ DATOS EXTRA NODOS ] 
         self.NodoIsOnline = False
@@ -202,31 +205,34 @@ class Nodo():
 
         if self.NodoIsOnline:
             if self.NodoIsHost:
-                self.NodoOvalo = MapSection.nodo_canvas.create_oval(
+                self.NodoOvalo = self.Canvas.create_oval(
                     self.NodoPosX-25, self.NodoPosY-25,
                     self.NodoPosX+25, self.NodoPosY+25,
                     fill="#56d054", outline="#1a831c", width=3,
-                    tags=(tag, "node")
+                    tags=(self.NodoID, "nodo")
                 )
             else:
-                self.NodoOvalo = MapSection.nodo_canvas.create_oval(
+                self.NodoOvalo = self.Canvas.create_oval(
                     self.NodoPosX-25, self.NodoPosY-25,
                     self.NodoPosX+25, self.NodoPosY+25,
-                    fill="#549cd0", outline="#1a5b83", width=3
+                    fill="#549cd0", outline="#1a5b83", width=3,
+                    tags=(self.NodoID, "nodo")
                 )
         else:
-            self.NodoOvalo = MapSection.nodo_canvas.create_oval(
+            self.NodoOvalo = self.Canvas.create_oval(
                 self.NodoPosX-25, self.NodoPosY-25,
                 self.NodoPosX+25, self.NodoPosY+25,
-                fill="#d05454", outline="#831a1a", width=3
+                fill="#d05454", outline="#831a1a", width=3,
+                tags=(self.NodoID, "nodo")
             )
 
-        self.NodoTexto = MapSection.nodo_canvas.create_text(
+        self.NodoTexto = self.Canvas.create_text(
             self.NodoPosX,
             self.NodoPosY+30,
             text=self.NodoIP,
             fill="white",
-            font=("Arial", 12, "bold")
+            font=("Arial", 12, "bold"),
+            tags=(self.NodoID, "nodo")
         )
 
 
@@ -251,14 +257,75 @@ class Nodo():
 
         }
 
-    
-    # Esto es lo que dibujara los nodos y las conexiones
     def MoveNode(self):
         pass
 
 
+
+
+
+
+
+
+def icmp_scan(ip):
+    ICMPRequest = IP(dst=ip) / ICMP()
+    response = sr1(ICMPRequest, timeout=2, verbose=0)
+    if response: return True
+    else: return False
+
+
+def arp_scan(ip):
+    pass
+
+
+Nodes = []
+
+def update_node(node,data):
+    
         
 
-    
+
+def get_status(ip):
+    return icmp_scan(ip) or arp_scan(ip)
+
+def GetMAC(ip):
+    pass
 
 
+
+
+def ScanIP(InputedIP):
+    if ValidIp(InputedIP):
+        if not "/" in InputedIP:
+            #ESCANEO DE IP
+            
+            inputed_ip_online = get_status(InputedIP)
+
+            if inputed_ip_online:
+                InputedIP_MAC = GetMAC(InputedIP)
+                
+                for nodo in Nodos:
+                    if nodo.NodoMAC == InputedIP_MAC:
+                        update_node(nodo, )
+
+
+
+        
+
+
+
+
+
+
+
+
+        else:
+            #ESCANEO DE RED
+            pass
+
+
+
+
+    else: 
+        print("ERRROR") 
+        # MENSAJE DE ERROR DE WINDOW

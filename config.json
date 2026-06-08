@@ -1,12 +1,10 @@
 {
-  "scan_options": {
-    "icmp": true,
-    "arp": true,
-    "os": false,
-    "ports": false,
-    "traceroute": true
-  },
-  "view_options": {
-    "TEST": false
-  }
+    "scan_options": {
+        "icmp": true,
+        "arp": true,
+        "ports": true,
+        "os_detect": true
+    },
+    "scan_timeout": 2,
+    "theme": "dark"
 }

@@ -10,7 +10,7 @@ La aplicación está orientada a entornos de redes privadas, facilitando la supe
 - Escaneo de puertos en dispositivos activos
 - Identificación de servicios en ejecución
 - Análisis básico de la infraestructura de red
-- Visualización de la información obtenida (si aplica en tu proyecto)
+- Visualización de la información obtenida 
 
 ## 📦 Instalación
 
